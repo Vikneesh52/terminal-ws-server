@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import pty from "node-pty";
 import os from "os";
-import fs from "fs";
+import { rmSync, fs } from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
@@ -105,10 +105,15 @@ wss.on("connection", (ws) => {
 
     // Clean up user directory
     try {
-      fs.rmSync(userBaseDir, { recursive: true, force: true });
+      rmSync(userBaseDir, {
+        recursive: true,
+        force: true,
+        maxRetries: 3,
+        retryDelay: 100,
+      });
       console.log(`Cleaned up directory: ${userBaseDir}`);
-    } catch (cleanupError) {
-      console.error(`Failed to clean up ${userBaseDir}:`, cleanupError);
+    } catch (err) {
+      console.error(`Failed to clean up ${userBaseDir}:`, err);
     }
   });
 });
