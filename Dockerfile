@@ -4,18 +4,20 @@ FROM node:20-alpine
 # Create app directory
 WORKDIR /app
 
-# Install build dependencies before npm install
-RUN apk add --no-cache python3 make g++ 
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ git openssh-client
 
-# Copy package.json and package-lock.json (or yarn.lock) to leverage Docker cache
+# For node-pty specifically
+RUN apk add --no-cache linux-headers eudev-dev
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with verbose output for node-pty
+RUN npm install --build-from-source --verbose
 
-# Optionally remove build dependencies to reduce image size
-# (only do this if you're sure they won't be needed at runtime)
-# RUN apk del python3 make g++
+# Add type module to package.json if needed (based on warning)
+RUN if grep -q "type" package.json; then echo "type already specified"; else sed -i 's/{"name":/{"type":"module","name":/g' package.json || echo '{"type":"module"}' >> package.json; fi
 
 # Copy app files
 COPY . .
