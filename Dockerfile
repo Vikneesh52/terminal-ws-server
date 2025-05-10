@@ -1,22 +1,22 @@
 # Use Node 20 Alpine base image for smaller size and fewer vulnerabilities
 FROM node:20-alpine
 
-# Create app directory
+# Install build tools
+RUN apt-get update && \
+    apt-get install -y python3 make g++ && \
+    apt-get clean
+
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to leverage Docker cache
+# Copy only package files first (cache npm install step)
 COPY package*.json ./
 
-RUN apk update && \
-    apk add --no-cache python3 make g++ && \
-    npm install && \
-    apk del python3 make g++
+# Force a clean install (no prebuilt node_modules)
+RUN npm install --build-from-source
 
-# Copy app files
+# Then copy rest of the app
 COPY . .
 
-# Expose your port
 EXPOSE 3001
 
-# Start the app
 CMD ["node", "index.js"]
