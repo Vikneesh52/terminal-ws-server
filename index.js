@@ -105,7 +105,7 @@ wss.on("connection", (ws) => {
 
     // Clean up user directory
     try {
-      rmSync(userBaseDir, {
+      fs.rmSync(userBaseDir, {
         recursive: true,
         force: true,
         maxRetries: 3,
