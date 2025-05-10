@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy package.json and package-lock.json (or yarn.lock) to leverage Docker cache
 COPY package*.json ./
 
-RUN npm install --build-from-source
+RUN npm install
 
 RUN apk update && \
     apk add --no-cache python3 make g++ && \
