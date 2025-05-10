@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import pty from "node-pty";
 import os from "os";
-import { rmSync, fs } from "fs";
+import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
