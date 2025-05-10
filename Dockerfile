@@ -16,9 +16,6 @@ COPY package*.json ./
 # Install dependencies with rebuild
 RUN npm install --verbose
 
-# Add type module to package.json if needed (based on warning)
-RUN if grep -q "type" package.json; then echo "type already specified"; else sed -i 's/{"name":/{"type":"module","name":/g' package.json || echo '{"type":"module"}' >> package.json; fi
-
 # Copy app files
 COPY . .
 
